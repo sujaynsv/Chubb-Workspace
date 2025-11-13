@@ -1,0 +1,6 @@
+# txId,employeeId,employeeName,employeeIfsc,amountInRupees,txnCode
+T001,1001,Ajay,HDFC00002131,23500,Salary
+T002,1002,Roy,HDFC00002302,18000,Salary
+T003,1003,Kriti,SBI00002301,20000,Salary
+T004,1004,Praveen,BOI00002301,15000,Salary
+T005,1005,Anil,ICICI00002305,50000,Salary

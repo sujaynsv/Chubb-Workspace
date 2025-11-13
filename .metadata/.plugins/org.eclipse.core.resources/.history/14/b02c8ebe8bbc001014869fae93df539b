@@ -1,0 +1,5 @@
+package com.example.funds;
+
+public interface CustomerService {
+
+}

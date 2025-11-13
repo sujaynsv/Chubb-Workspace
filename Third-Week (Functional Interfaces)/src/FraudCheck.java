@@ -1,0 +1,50 @@
+import java.util.*;
+import java.util.stream.Collectors;
+
+class Person{
+    private String name;
+    private String type; 
+
+    public Person(String name, String type) {
+        this.name = name;
+        this.type = type;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+}
+public class FraudCheck {
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+
+        System.out.print("Enter traveller name: ");
+        String name = sc.nextLine();
+
+        System.out.print("Enter traveller type (domestic/international): ");
+        String type = sc.nextLine();
+
+        Person traveller = new Person(name, type);
+
+        List<String> fraudList = Arrays.asList("Bob", "Charlie", "David");
+
+        boolean isFraud = fraudList.stream()
+                .filter(n -> n.equalsIgnoreCase(traveller.getName()))
+                .findAny()
+                .isPresent();
+
+        if (isFraud) {
+            System.out.println("Travel Blocked! FRAUD detected for: " + traveller.getName());
+        } else {
+            System.out.println("Traveller cleared: " + traveller.getName());
+        }
+
+
+        sc.close();
+    }
+}

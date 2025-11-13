@@ -1,0 +1,15 @@
+
+public class Swithc {
+	public static void main(String[] args) {
+		int day=10;
+		String res= switch(day) {
+		case 1,2,3 ->{System.out.println("One");
+					yield "10";}
+		case 4,5-> "Two";
+		case 6,7 ->"three";
+		default ->"none";
+		};
+		System.out.println(res);
+	}
+
+}

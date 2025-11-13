@@ -1,0 +1,143 @@
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.Test;
+import java.util.HashMap;
+import java.util.Map;
+
+class FuntranfercheckTest {
+    private class subacc implements AccountService {
+        private Map<String, Double> accounts = new HashMap<>();
+
+        public subacc() {
+            accounts.put("123", 200.0);
+            accounts.put("456", 150.0);
+            accounts.put("1234", 150.0);
+        }
+
+        public void setBalance(String accountId, double balance) {
+            accounts.put(accountId, balance);
+        }
+        
+        public void removeAccount(String accountId) {
+            accounts.remove(accountId);
+        }
+
+        @Override
+        public boolean exists(String accountId) {
+            return accounts.containsKey(accountId);
+        }
+
+        @Override
+        public double getBalance(String accountId) {
+            return accounts.getOrDefault(accountId, 0.0);
+        }
+
+        @Override
+        public boolean debit(String accountId, double amount) {
+            if (!exists(accountId) || getBalance(accountId) < amount) {
+                return false;
+            }
+            accounts.put(accountId, accounts.get(accountId) - amount);
+            return true;
+        }
+
+        @Override
+        public boolean credit(String accountId, double amount) {
+            if (!exists(accountId)||accountId.equals("1234")) {
+                return false;
+            }
+            accounts.put(accountId, accounts.get(accountId) + amount);
+            return true;
+        }
+    }
+    @Test
+    void transfer() {
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);
+        
+        String resultSuccess = fundTransferService.transfer("123", "456", 100.0);
+        
+        assertEquals("SUCCESS: Transfer completed", resultSuccess);
+        assertEquals(100.0, a.getBalance("123"));
+        assertEquals(250.0, a.getBalance("456"));
+    }
+    @Test
+    void Amount_Zero() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a); 
+        String result = fundTransferService.transfer("123", "456", 0.0);
+        
+        assertEquals("FAILURE: Invalid amount", result);
+        assertEquals(200.0, a.getBalance("123"));
+        assertEquals(150.0, a.getBalance("456"));
+    }
+
+    @Test
+    void Amount_Negative() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);  
+        String result = fundTransferService.transfer("123", "456", -50.0);
+        
+        assertEquals("FAILURE: Invalid amount", result);
+        assertEquals(200.0, a.getBalance("123"));
+        assertEquals(150.0, a.getBalance("456"));
+    }
+    @Test
+    void Greater_Amount() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);  
+        String result = fundTransferService.transfer("123", "456", 500001);
+        
+        assertEquals("FAILURE: To Send", result);
+        assertEquals(200.0, a.getBalance("123"));
+        assertEquals(150.0, a.getBalance("456"));
+    }
+
+    @Test
+    void SameAccount() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);
+        String result = fundTransferService.transfer("123", "123", 50.0);
+        
+        assertEquals("FAILURE: Source and destination cannot be same", result);
+        assertEquals(200.0, a.getBalance("123"));
+    }
+
+    @Test
+    void InsufficientFunds() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);
+        String result = fundTransferService.transfer("123", "456", 250.0);
+        
+        assertEquals("FAILURE: Insufficient funds", result);        
+        assertEquals(200.0, a.getBalance("123"));
+        assertEquals(150.0, a.getBalance("456"));
+    }
+
+    @Test
+    void InvalidAccount() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);
+        String result = fundTransferService.transfer("123", "999", 50.0);
+        
+        assertEquals("FAILURE: Destination account not found", result);
+        assertEquals(200.0, a.getBalance("123"));
+        assertEquals(150.0, a.getBalance("456"));
+    }
+
+    @Test
+    void testTransactionErrorOnCreditFailure() {
+
+        subacc a = new subacc();
+        FundTransferService fundTransferService = new FundTransferService(a);
+        String result = fundTransferService.transfer("123", "1234", 50.0);
+        
+        assertEquals("FAILURE: Transaction error", result);
+        assertEquals(150.0, a.getBalance("123"));
+    }
+}

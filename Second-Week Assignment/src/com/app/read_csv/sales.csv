@@ -1,0 +1,6 @@
+TransactionID,Date,Product,Category,Region,Customer,Units,UnitPrice
+T1,2025-01-05,Widget A,Gadgets,North,Acme Corp,10,12.5
+T2,2025-01-07,Widget B,Gadgets,South,Globex,5,20.0
+T3,2025-02-12,Widget A,Gadgets,North,Umbrella Ltd,2,12.5
+T4,2025-02-15,Widget C,Tools,East,Acme Corp,7,18.0
+T5,2025-03-02,Widget B,Gadgets,West,Initech,1,20.0

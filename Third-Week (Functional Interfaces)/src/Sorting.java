@@ -1,0 +1,39 @@
+import java.util.*;
+
+public class Sorting {
+    public static void main(String[] args) {
+
+        List<Accounts> accounts = Arrays.asList(
+                new Accounts(103, "Alice"),
+                new Accounts(101, "Bob"),
+                new Accounts(105, "Charlie"),
+                new Accounts(102, "David")
+        );
+
+        System.out.println("Sort by Account Number (Ascending):");
+        accounts.stream()
+                .sorted((a1, a2) -> a1.getAccountNumber() - a2.getAccountNumber())
+                .forEach(System.out::println);
+
+        System.out.println("\nSort by Account Number (Descending):");
+        accounts.stream()
+                .sorted((a1, a2) -> a2.getAccountNumber() - a1.getAccountNumber())
+                .forEach(System.out::println);
+
+        System.out.println("\nSort by Name Alphabetically:");
+        accounts.stream()
+                .sorted((a1, a2) -> a1.getName().compareTo(a2.getName()))
+                .forEach(System.out::println);
+
+        System.out.println("\nUsing Comparator.comparing:");
+        accounts.stream()
+                .sorted(Comparator.comparing(Accounts::getAccountNumber))
+                .forEach(System.out::println);
+        
+        
+        System.out.println("\nUsing Comparator.comparing for names: ");
+        accounts.stream()
+        		.sorted(Comparator.comparing(Accounts::getName))
+        		.forEach(System.out::println);
+    }
+}

@@ -1,0 +1,49 @@
+package com.example.funds;
+
+public class FundTransferService {
+
+    private final CustomerService customerService;
+    private final AccountService accountService;
+
+    public FundTransferService(CustomerService customerService, AccountService accountService) {
+        this.customerService = customerService;
+        this.accountService = accountService;
+    }
+
+    public String transferFund(String fromCustomer, String toCustomer, double amount) {
+
+        if (amount <= 0) {
+            return "FAILURE: Invalid amount";
+        }
+
+        if (fromCustomer.equals(toCustomer)) {
+            return "FAILURE: Cannot transfer to the same account";
+        }
+
+        // Validate both customers
+        if (!customerService.isValidCustomer(fromCustomer)) {
+            return "FAILURE: Invalid sender";
+        }
+
+        if (!customerService.isValidCustomer(toCustomer)) {
+            return "FAILURE: Invalid receiver";
+        }
+
+        // Check balance
+        double balance = accountService.getBalance(fromCustomer);
+        if (balance < amount) {
+            return "FAILURE: Insufficient funds";
+        }
+
+        // Process the transaction
+        boolean debitSuccess = accountService.debit(fromCustomer, amount);
+        boolean creditSuccess = accountService.credit(toCustomer, amount);
+
+        if (debitSuccess && creditSuccess) {
+            return "SUCCESS: Transfer completed";
+        }
+
+        return "FAILURE: Transaction error";
+    }
+}
+

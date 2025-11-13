@@ -1,0 +1,47 @@
+// SealedDemo.java
+
+sealed class Shape permits Circle, Rectangle {}  // only these 2 can extend Shape
+
+final class Circle extends Shape {                // no further subclassing
+    double radius;
+
+    Circle(double radius) {
+        this.radius = radius;
+    }
+
+    double area() {
+        return Math.PI * radius * radius;
+    }
+}
+
+non-sealed class Rectangle extends Shape {        // open for further subclassing
+    double width, height;
+
+    Rectangle(double width, double height) {
+        this.width = width;
+        this.height = height;
+    }
+
+    double area() {
+        return width * height;
+    }
+}
+
+// a normal subclass of Rectangle (allowed because Rectangle is non-sealed)
+class Square extends Rectangle {
+    Square(double side) {
+        super(side, side);
+    }
+}
+
+public class SealedTest {
+    public static void main(String[] args) {
+        Shape c = new Circle(3.0);
+        Shape r = new Rectangle(4.0, 5.0);
+        Shape s = new Square(6.0);
+
+        System.out.println("Circle area: " + ((Circle)c).area());
+        System.out.println("Rectangle area: " + ((Rectangle)r).area());
+        System.out.println("Square area: " + ((Square)s).area());
+    }
+}

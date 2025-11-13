@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<section name="org.eclipse.buildship.ui.wizard.project.creation">
+		<item key="project_location" value="/Users/sujaynimmagadda/eclipse-workspace/gradle-project"/>
+		<item key="use_default_location" value="true"/>
+		<item key="gradle_distribution" value="GRADLE_DISTRIBUTION(WRAPPER)"/>
+		<item key="apply_working_sets" value="true"/>
+		<item key="gradle_user_home" value="/Users/sujaynimmagadda/.gradle"/>
+		<item key="java_home" value="/Users/sujaynimmagadda/Library/Java/JavaVirtualMachines/openjdk-25/Contents/Home"/>
+		<item key="show_executions_view" value="true"/>
+		<item key="show_console_view" value="true"/>
+		<item key="auto_sync" value="true"/>
+		<item key="build_scans" value="true"/>
+		<item key="offline_mode" value="false"/>
+		<list key="working_sets">
+		</list>
+		<section name="ProjectCreationWizard.dialogBounds">
+			<item key="DIALOG_X_ORIGIN" value="442"/>
+			<item key="DIALOG_Y_ORIGIN" value="167"/>
+			<item key="DIALOG_WIDTH" value="586"/>
+			<item key="DIALOG_HEIGHT" value="756"/>
+			<item key="DIALOG_FONT_NAME" value="1|.AppleSystemUIFont|11.0|0|COCOA|1|.AppleSystemUIFont"/>
+		</section>
+	</section>
+</section>

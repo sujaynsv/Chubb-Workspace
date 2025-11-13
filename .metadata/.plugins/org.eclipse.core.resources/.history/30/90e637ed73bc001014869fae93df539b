@@ -1,0 +1,101 @@
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.HashMap;
+import java.util.Map;
+
+class FundTransferServiceTest {
+
+    private FundTransferService fundTransferService;
+    private TestAccountService accountService;
+
+    @BeforeEach
+    void setUp() {
+        accountService = new TestAccountService();
+        fundTransferService = new FundTransferService(accountService);
+
+        // Add test accounts
+        accountService.addAccount("A1", 1000.0);
+        accountService.addAccount("A2", 500.0);
+    }
+
+    @Test
+    void testInvalidAmount() {
+        String result = fundTransferService.transfer("A1", "A2", -100);
+        assertEquals("FAILURE: Invalid amount", result);
+    }
+
+    @Test
+    void testSameAccountTransfer() {
+        String result = fundTransferService.transfer("A1", "A1", 200);
+        assertEquals("FAILURE: Source and destination cannot be same", result);
+    }
+
+    @Test
+    void testInsufficientFunds() {
+        String result = fundTransferService.transfer("A1", "A2", 2000);
+        assertEquals("FAILURE: Insufficient funds", result);
+    }
+
+    @Test
+    void testDestinationAccountNotFound() {
+        String result = fundTransferService.transfer("A1", "A3", 100);
+        assertEquals("FAILURE: Destination account not found", result);
+    }
+
+    @Test
+    void testSuccessfulTransfer() {
+        String result = fundTransferService.transfer("A1", "A2", 200);
+        assertEquals("SUCCESS: Transfer completed", result);
+
+        assertEquals(800.0, accountService.getBalance("A1"));
+        assertEquals(700.0, accountService.getBalance("A2"));
+    }
+
+    @Test
+    void testTransactionError() {
+        accountService.failNextDebit = true;
+        String result = fundTransferService.transfer("A1", "A2", 100);
+        assertEquals("FAILURE: Transaction error", result);
+    }
+
+    private static class TestAccountService implements AccountService {
+        private final Map<String, Double> accounts = new HashMap<>();
+        boolean failNextDebit = false;
+
+        void addAccount(String accountNumber, double balance) {
+            accounts.put(accountNumber, balance);
+        }
+
+        @Override
+        public boolean exists(String accountNumber) {
+            return accounts.containsKey(accountNumber);
+        }
+
+        @Override
+        public double getBalance(String accountNumber) {
+            return accounts.getOrDefault(accountNumber, 0.0);
+        }
+
+        @Override
+        public boolean debit(String accountNumber, double amount) {
+            if (failNextDebit) {
+                failNextDebit = false;
+                return false;
+            }
+            if (!exists(accountNumber) || accounts.get(accountNumber) < amount)
+                return false;
+            accounts.put(accountNumber, accounts.get(accountNumber) - amount);
+            return true;
+        }
+
+        @Override
+        public boolean credit(String accountNumber, double amount) {
+            if (!exists(accountNumber))
+                return false;
+            accounts.put(accountNumber, accounts.get(accountNumber) + amount);
+            return true;
+        }
+    }
+}

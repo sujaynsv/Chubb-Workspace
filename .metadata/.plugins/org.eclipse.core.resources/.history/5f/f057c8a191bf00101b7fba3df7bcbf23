@@ -1,0 +1,86 @@
+package com.app.read_csv;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class ReadCSV {
+
+    static class SalesRecord {
+        String transactionId;
+        LocalDate date;
+        String product;
+        String category;
+        String region;
+        String customer;
+        int units;
+        double unitPrice;
+
+        SalesRecord(String transactionId, LocalDate date, String product,
+                    String category, String region, String customer,
+                    int units, double unitPrice) {
+            this.transactionId = transactionId;
+            this.date = date;
+            this.product = product;
+            this.category = category;
+            this.region = region;
+            this.customer = customer;
+            this.units = units;
+            this.unitPrice = unitPrice;
+        }
+
+        public String toString() {
+            return transactionId + " | " + product + " | " + region + " | " + units + " units @ " + unitPrice;
+        }
+    }
+
+    public static void main(String[] args) {
+        String filePath = "//Users//sujaynimmagadda//eclipse-workspace//Week-2 Assignment//src//com//app/read_csv//sales.csv"; 
+
+        try (Stream<String> lines = Files.lines(Paths.get(filePath))) {
+            // skip header line and convert each line into a SalesRecord
+            List<SalesRecord> records = lines
+                    .skip(1)
+                    .map(line -> line.split(","))
+                    .map(parts -> new SalesRecord(
+                            parts[0].trim(),
+                            LocalDate.parse(parts[1].trim(), DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                            parts[2].trim(),
+                            parts[3].trim(),
+                            parts[4].trim(),
+                            parts[5].trim(),
+                            Integer.parseInt(parts[6].trim()),
+                            Double.parseDouble(parts[7].trim())
+                    ))
+                    .collect(Collectors.toList());
+
+            System.out.println("Sales Records:");
+            records.forEach(System.out::println);
+            
+            
+            System.out.println("\nSales record by Region");
+            records.stream()
+            .filter(r->r.region.equalsIgnoreCase("North"))
+            .forEach(System.out::println);
+            
+            var val=records.stream()
+            .mapToInt(r->r.units)
+            .sum();
+            System.out.println("\nTotal units sold: "+val);
+            
+            var revenue=records.stream()
+            .mapToDouble(r->r.units*r.unitPrice)
+            .sum();
+            System.out.println("\nTotal Revenue generated is: "+revenue);
+            
+
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
+        }
+    }
+}
